@@ -33,7 +33,12 @@ private:
 	glm::vec2 m_v2HeadNode;
 
 	float m_fTimeToNextMove;
-	const float m_fTimeBetweenMovements = 0.5f;
+	const float TIME_BETWEEN_MOVEMENTS = 0.5f;
 
 	bool m_bIncreasingSize = false;
+
+	int m_nSize = 1;
+
+	const float EYE_WHITE_SCALE = 0.1f;
+	const float EYE_BLACK_SCALE = 0.05f;
 };

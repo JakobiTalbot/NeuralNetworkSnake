@@ -7,7 +7,7 @@ Pickup::Pickup(Grid* pGrid)
 {
 	m_pGrid = pGrid;
 	// seed random
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 }
 
 Pickup::~Pickup()

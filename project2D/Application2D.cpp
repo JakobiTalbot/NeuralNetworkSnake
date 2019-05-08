@@ -25,7 +25,7 @@ bool Application2D::startup()
 	m_pInstance = this;
 	// initialise grid
 	m_pGrid = new Grid();
-	m_pGrid->Init(getWindowWidth(), getWindowHeight());
+	m_pGrid->Init();
 	// create snake
 	m_pSnake = new Snake(m_pGrid);
 	// create renderer

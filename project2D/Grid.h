@@ -14,7 +14,7 @@ public:
 	Grid();
 	~Grid();
 
-	void Init(int nWindowHeight, int nWindowWidth);
+	void Init();
 
 	void Draw(aie::Renderer2D* pRenderer);
 

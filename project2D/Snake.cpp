@@ -7,7 +7,7 @@ Snake::Snake(Grid* pGrid)
 {
 	m_pGrid = pGrid;
 	
-	m_fTimeToNextMove = m_fTimeBetweenMovements;
+	m_fTimeToNextMove = TIME_BETWEEN_MOVEMENTS;
 	m_nextDirection = eDirection::Up;
 	m_lastDirection = eDirection::Up;
 	// start in centre
@@ -42,7 +42,7 @@ void Snake::Update(float fDeltaTime, Pickup* pPickup)
 	while (m_fTimeToNextMove <= 0.f)
 	{
 		// add time to timer
-		m_fTimeToNextMove += m_fTimeBetweenMovements;
+		m_fTimeToNextMove += TIME_BETWEEN_MOVEMENTS;
 
 		// move in direction
 		switch (m_nextDirection)
@@ -105,13 +105,15 @@ void Snake::Update(float fDeltaTime, Pickup* pPickup)
 		{
 			// spawn new pickup
 			pPickup->SpawnPickup(this);
+			m_nSize++;
 			// don't decrease in size (effectively adds one to size)
 			m_bIncreasingSize = true;
 		}
 		
 		// find if snake collides with itself
 		std::vector<Node*>::iterator nodeIterator = std::find(m_pSnakeNodes.begin() + 1, m_pSnakeNodes.end(), &m_pGrid->GetNodes()[(int)m_v2HeadNode.x][(int)m_v2HeadNode.y]);
-		if (nodeIterator != m_pSnakeNodes.end())
+		if (nodeIterator != m_pSnakeNodes.end()
+			&& nodeIterator != m_pSnakeNodes.end() - 1)
 		{
 			// quit if colliding
 			Application2D::GetInstance()->quit();
@@ -132,8 +134,92 @@ void Snake::Draw(aie::Renderer2D* pRenderer)
 	// draw snake nodes
 	for (auto& node : m_pSnakeNodes)
 	{
-		pRenderer->setRenderColour(0, 0.8, 0);
+		pRenderer->setRenderColour(0, 0.8f, 0);
 		pRenderer->drawBox(node->m_v2Position.x, node->m_v2Position.y,
 			node->m_v2Extents.x, node->m_v2Extents.y);
+	}
+
+	// get all possible eye positions
+	glm::vec2 v2TopRightEyePos = { m_pSnakeNodes[0]->m_v2Position.x + m_pSnakeNodes[0]->m_v2Extents.x * 0.25f,
+				m_pSnakeNodes[0]->m_v2Position.y + m_pSnakeNodes[0]->m_v2Extents.y * 0.25f };
+	glm::vec2 v2BottomLeftEyePos = { m_pSnakeNodes[0]->m_v2Position.x - m_pSnakeNodes[0]->m_v2Extents.x * 0.25f,
+				m_pSnakeNodes[0]->m_v2Position.y - m_pSnakeNodes[0]->m_v2Extents.y * 0.25f };
+
+	pRenderer->setRenderColour(1, 1, 1);
+	// draw eyes
+	switch (m_lastDirection)
+	{
+		case (eDirection::Up):
+			// white part of eyes
+			// top left
+			pRenderer->drawCircle(v2BottomLeftEyePos.x, v2TopRightEyePos.y,
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_WHITE_SCALE);
+			// top right
+			pRenderer->drawCircle(v2TopRightEyePos.x, v2TopRightEyePos.y,
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_WHITE_SCALE);
+
+			// black part of eyes
+			pRenderer->setRenderColour(0, 0, 0);
+			// top left
+			pRenderer->drawCircle(v2BottomLeftEyePos.x, v2TopRightEyePos.y,
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_BLACK_SCALE);
+			// top right
+			pRenderer->drawCircle(v2TopRightEyePos.x, v2TopRightEyePos.y,
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_BLACK_SCALE);
+			break;
+		case (eDirection::Right):
+			// white part of eyes
+			// top right
+			pRenderer->drawCircle(v2TopRightEyePos.x, v2TopRightEyePos.y,
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_WHITE_SCALE);
+			// bottom right
+			pRenderer->drawCircle(v2TopRightEyePos.x, v2BottomLeftEyePos.y,
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_WHITE_SCALE);
+
+			// black part of eyes
+			pRenderer->setRenderColour(0, 0, 0);
+			// top right
+			pRenderer->drawCircle(v2TopRightEyePos.x, v2TopRightEyePos.y,
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_BLACK_SCALE);
+			// bottom right
+			pRenderer->drawCircle(v2TopRightEyePos.x, v2BottomLeftEyePos.y,
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_BLACK_SCALE);
+			break;
+		case (eDirection::Down):
+			// white part of eyes
+			// bottom left
+			pRenderer->drawCircle(v2BottomLeftEyePos.x, v2BottomLeftEyePos.y,
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_WHITE_SCALE);
+			// bottom right
+			pRenderer->drawCircle(v2TopRightEyePos.x, v2BottomLeftEyePos.y,
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_WHITE_SCALE);
+
+			// black part of eyes
+			pRenderer->setRenderColour(0, 0, 0);
+			// bottom left
+			pRenderer->drawCircle(v2BottomLeftEyePos.x, v2BottomLeftEyePos.y,
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_BLACK_SCALE);
+			// bottom right
+			pRenderer->drawCircle(v2TopRightEyePos.x, v2BottomLeftEyePos.y,
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_BLACK_SCALE);
+			break;
+		case (eDirection::Left):
+			// white part of eyes
+			// bottom left
+			pRenderer->drawCircle(v2BottomLeftEyePos.x, v2BottomLeftEyePos.y,
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_WHITE_SCALE);
+			// top left
+			pRenderer->drawCircle(v2BottomLeftEyePos.x, v2TopRightEyePos.y,
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_WHITE_SCALE);
+
+			// black part of eyes
+			pRenderer->setRenderColour(0, 0, 0);
+			// bottom left
+			pRenderer->drawCircle(v2BottomLeftEyePos.x, v2BottomLeftEyePos.y,
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_BLACK_SCALE);
+			// top left
+			pRenderer->drawCircle(v2BottomLeftEyePos.x, v2TopRightEyePos.y,
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_BLACK_SCALE);
+			break;
 	}
 }

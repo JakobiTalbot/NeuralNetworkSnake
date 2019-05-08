@@ -16,12 +16,12 @@ Grid::~Grid()
 	m_pNodes = nullptr;
 }
 
-void Grid::Init(int nWindowWidth, int nWindowHeight)
+void Grid::Init()
 {
 	// initialise node array
 	m_pNodes = new Node*[GRID_WIDTH];
-	float x = (float)nWindowWidth / GRID_WIDTH;
-	float y = (float)nWindowHeight / GRID_HEIGHT;
+	float x = (float)Application2D::GetInstance()->getWindowWidth() / GRID_WIDTH;
+	float y = (float)Application2D::GetInstance()->getWindowHeight() / GRID_HEIGHT;
 	// nested for loop to create array of nodes
 	for (int i = 0; i < GRID_WIDTH; ++i)
 	{
