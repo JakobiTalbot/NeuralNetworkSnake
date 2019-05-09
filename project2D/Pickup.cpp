@@ -44,3 +44,7 @@ void Pickup::MovePickup(Snake* pSnake)
 			bFoundSpot = true;
 	}
 }
+
+void Pickup::MovePickupNeural(NeuralSnake * pSnake)
+{
+}

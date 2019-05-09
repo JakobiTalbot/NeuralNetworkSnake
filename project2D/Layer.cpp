@@ -1,8 +1,9 @@
 #include "Layer.h"
 #include "Matrix.h"
-Layer::Layer(int nNeuronCount, int nLastLayerNeuronCount = NULL)
+Layer::Layer(int nNeuronCount, int nLastLayerNeuronCount)
 {
-	if (nLastLayerNeuronCount != NULL)
+	m_nNeuronCount = nNeuronCount;
+	if (nLastLayerNeuronCount > 0)
 	{
 		m_pWeights = new Matrix(nNeuronCount, nLastLayerNeuronCount);
 		m_pBiases = new Matrix(nNeuronCount, 1);

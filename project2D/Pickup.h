@@ -3,6 +3,7 @@
 #include "glm/glm.hpp"
 class Grid;
 class Snake;
+class NeuralSnake;
 class Pickup
 {
 public:
@@ -19,6 +20,8 @@ public:
 		@param The snake to avoid placing the pickup node on
 	*/
 	void MovePickup(Snake* pSnake);
+
+	void MovePickupNeural(NeuralSnake* pSnake);
 
 	/*	@brief Gets the coordinates of the node where the pickup is currently located
 		@return The coordinates of the node where the pickup is located

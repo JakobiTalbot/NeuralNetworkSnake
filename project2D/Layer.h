@@ -1,18 +1,18 @@
 #pragma once
 #include <vector>
 class Matrix;
-class Neuron;
 class Layer
 {
 public:
-	Layer(int nNeuronCount, int nLastLayerNeuronCount = NULL);
+	Layer(int nNeuronCount, int nLastLayerNeuronCount = 0);
 	~Layer();
 
 	Matrix* GetWeightMatrix() { return m_pWeights; }
 	Matrix* GetBiasMatrix() { return m_pBiases; }
+	int GetNeuronCount() { return m_nNeuronCount; }
 
 private:
-	std::vector<Neuron*> m_pNeurons;
+	int m_nNeuronCount;
 	Matrix* m_pWeights;
 	Matrix* m_pBiases;
 };

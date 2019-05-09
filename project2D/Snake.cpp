@@ -3,6 +3,7 @@
 #include "Input.h"
 #include "Pickup.h"
 #include "Application2D.h"
+
 Snake::Snake(Grid* pGrid, bool bWrapAround)
 {
 	m_pGrid = pGrid;
