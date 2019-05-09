@@ -27,7 +27,7 @@ bool Application2D::startup()
 	m_pGrid = new Grid();
 	m_pGrid->Init();
 	// create snake
-	m_pSnake = new Snake(m_pGrid);
+	m_pSnake = new Snake(m_pGrid, false);
 	// create renderer
 	m_2dRenderer = new aie::Renderer2D();
 	// initialise pickup

@@ -3,9 +3,10 @@
 #include "Input.h"
 #include "Pickup.h"
 #include "Application2D.h"
-Snake::Snake(Grid* pGrid)
+Snake::Snake(Grid* pGrid, bool bWrapAround)
 {
 	m_pGrid = pGrid;
+	m_bWrapAround = bWrapAround;
 	m_fTimeToNextMove = TIME_BETWEEN_MOVEMENTS;
 	m_nextDirection = eDirection::Up;
 	m_lastDirection = eDirection::Up;
@@ -54,8 +55,17 @@ void Snake::Update(float fDeltaTime, Pickup* pPickup)
 				}
 				else
 				{
-					m_pSnakeNodes.insert(m_pSnakeNodes.begin(), &m_pGrid->GetNodes()[(int)m_v2HeadNode.x][0]);
-					m_v2HeadNode.y = 0;
+					// check if we can wrap around the borders
+					if (m_bWrapAround)
+					{
+						// wrap around the border
+						m_pSnakeNodes.insert(m_pSnakeNodes.begin(), &m_pGrid->GetNodes()[(int)m_v2HeadNode.x][0]);
+						m_v2HeadNode.y = 0;
+					}
+					else
+					{
+						Application2D::GetInstance()->quit();
+					}
 				}
 				break;
 
@@ -67,8 +77,17 @@ void Snake::Update(float fDeltaTime, Pickup* pPickup)
 				}
 				else
 				{
-					m_pSnakeNodes.insert(m_pSnakeNodes.begin(), &m_pGrid->GetNodes()[0][(int)m_v2HeadNode.y]);
-					m_v2HeadNode.x = 0;
+					// check if we can wrap around the borders
+					if (m_bWrapAround)
+					{
+						// wrap around the border
+						m_pSnakeNodes.insert(m_pSnakeNodes.begin(), &m_pGrid->GetNodes()[0][(int)m_v2HeadNode.y]);
+						m_v2HeadNode.x = 0;
+					}
+					else
+					{
+						Application2D::GetInstance()->quit();
+					}
 				}
 				break;
 
@@ -80,8 +99,17 @@ void Snake::Update(float fDeltaTime, Pickup* pPickup)
 				}
 				else
 				{
-					m_pSnakeNodes.insert(m_pSnakeNodes.begin(), &m_pGrid->GetNodes()[(int)m_v2HeadNode.x][GRID_HEIGHT - 1]);
-					m_v2HeadNode.y = GRID_HEIGHT - 1;
+					// check if we can wrap around the borders
+					if (m_bWrapAround)
+					{
+						// wrap around the border
+						m_pSnakeNodes.insert(m_pSnakeNodes.begin(), &m_pGrid->GetNodes()[(int)m_v2HeadNode.x][GRID_HEIGHT - 1]);
+						m_v2HeadNode.y = GRID_HEIGHT - 1;
+					}
+					else
+					{
+						Application2D::GetInstance()->quit();
+					}
 				}
 				break;
 
@@ -93,8 +121,17 @@ void Snake::Update(float fDeltaTime, Pickup* pPickup)
 				}
 				else
 				{
-					m_pSnakeNodes.insert(m_pSnakeNodes.begin(), &m_pGrid->GetNodes()[GRID_WIDTH - 1][(int)m_v2HeadNode.y]);
-					m_v2HeadNode.x = GRID_WIDTH - 1;
+					// check if we can wrap around the borders
+					if (m_bWrapAround)
+					{
+						// wrap around the border
+						m_pSnakeNodes.insert(m_pSnakeNodes.begin(), &m_pGrid->GetNodes()[GRID_WIDTH - 1][(int)m_v2HeadNode.y]);
+						m_v2HeadNode.x = GRID_WIDTH - 1;
+					}
+					else
+					{
+						Application2D::GetInstance()->quit();
+					}
 				}
 				break;
 		}
@@ -130,6 +167,10 @@ void Snake::Update(float fDeltaTime, Pickup* pPickup)
 
 void Snake::Draw(aie::Renderer2D* pRenderer)
 {
+	// prevent errors if snake has died at size of 1 node
+	if (m_pSnakeNodes.size() < 1)
+		return;
+
 	pRenderer->setRenderColour(0, 0.8f, 0);
 	// draw snake nodes
 	for (auto& node : m_pSnakeNodes)

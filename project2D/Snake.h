@@ -19,7 +19,7 @@ enum class eDirection
 class Snake
 {
 public:
-	Snake(Grid* pGrid);
+	Snake(Grid* pGrid, bool bWrapAround);
 	~Snake();
 	
 	/*	@brief Gets directional input each frame and moves the snake each time step,
@@ -56,6 +56,8 @@ private:
 	bool m_bIncreasingSize = false;
 	// current size of the snake
 	int m_nSize = 1;
+	// whether the snake can wrap around the borders of the screen or not
+	bool m_bWrapAround = false;
 
 	// time between each snake movement (seconds)
 	const float TIME_BETWEEN_MOVEMENTS = 0.4f;

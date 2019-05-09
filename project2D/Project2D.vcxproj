@@ -173,13 +173,21 @@
   <ItemGroup>
     <ClCompile Include="Application2D.cpp" />
     <ClCompile Include="Grid.cpp" />
+    <ClCompile Include="Layer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Matrix.cpp" />
+    <ClCompile Include="NeuralNetwork.cpp" />
+    <ClCompile Include="Neuron.cpp" />
     <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="Snake.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application2D.h" />
     <ClInclude Include="Grid.h" />
+    <ClInclude Include="Layer.h" />
+    <ClInclude Include="Matrix.h" />
+    <ClInclude Include="NeuralNetwork.h" />
+    <ClInclude Include="Neuron.h" />
     <ClInclude Include="Pickup.h" />
     <ClInclude Include="Snake.h" />
   </ItemGroup>
