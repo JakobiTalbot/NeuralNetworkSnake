@@ -32,7 +32,7 @@ bool Application2D::startup()
 	m_2dRenderer = new aie::Renderer2D();
 	// initialise pickup
 	m_pPickup = new Pickup(m_pGrid);
-	m_pPickup->SpawnPickup(m_pSnake);
+	m_pPickup->MovePickup(m_pSnake);
 	// load font
 	m_font = new aie::Font("./font/consolas.ttf", 32);
 	return true;
@@ -74,13 +74,6 @@ void Application2D::draw()
 	m_pGrid->Draw(m_2dRenderer);
 	m_pSnake->Draw(m_2dRenderer);
 	m_pPickup->Draw(m_2dRenderer);
-
-	m_2dRenderer->setRenderColour(1, 1, 1);
-	// output some text, uses the last used colour
-	//char fps[32];
-	//sprintf_s(fps, 32, "FPS: %i", getFPS());
-	//m_2dRenderer->drawText(m_font, fps, 0, 720 - 32);
-	//m_2dRenderer->drawText(m_font, "Press ESC to quit!", 0, 720 - 64);
 
 	// done drawing sprites
 	m_2dRenderer->end();

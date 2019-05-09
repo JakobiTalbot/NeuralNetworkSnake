@@ -8,7 +8,7 @@ int main()
 	auto app = new Application2D();
 
 	// initialise and loop
-	app->run("AIE", 768, 768, false);
+	app->run("Neural Snake", 768, 768, false);
 
 	// deallocation
 	delete app;

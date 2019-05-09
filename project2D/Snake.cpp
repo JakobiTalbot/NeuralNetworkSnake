@@ -6,7 +6,6 @@
 Snake::Snake(Grid* pGrid)
 {
 	m_pGrid = pGrid;
-	
 	m_fTimeToNextMove = TIME_BETWEEN_MOVEMENTS;
 	m_nextDirection = eDirection::Up;
 	m_lastDirection = eDirection::Up;
@@ -24,16 +23,16 @@ void Snake::Update(float fDeltaTime, Pickup* pPickup)
 	aie::Input* pInput = aie::Input::getInstance();
 
 	// get input direction
-	if (pInput->wasKeyPressed(aie::INPUT_KEY_UP)
+	if (pInput->isKeyDown(aie::INPUT_KEY_UP)
 		&& m_lastDirection != eDirection::Down)
 		m_nextDirection = eDirection::Up;
-	else if (pInput->wasKeyPressed(aie::INPUT_KEY_RIGHT)
+	else if (pInput->isKeyDown(aie::INPUT_KEY_RIGHT)
 		&& m_lastDirection != eDirection::Left)
 		m_nextDirection = eDirection::Right;
-	else if (pInput->wasKeyPressed(aie::INPUT_KEY_DOWN)
+	else if (pInput->isKeyDown(aie::INPUT_KEY_DOWN)
 		&& m_lastDirection != eDirection::Up)
 		m_nextDirection = eDirection::Down;
-	else if (pInput->wasKeyPressed(aie::INPUT_KEY_LEFT)
+	else if (pInput->isKeyDown(aie::INPUT_KEY_LEFT)
 		&& m_lastDirection != eDirection::Right)
 		m_nextDirection = eDirection::Left;
 
@@ -99,16 +98,6 @@ void Snake::Update(float fDeltaTime, Pickup* pPickup)
 				}
 				break;
 		}
-
-		// check if we entered the node with the pickup in it
-		if (m_v2HeadNode == pPickup->GetPickupNode())
-		{
-			// spawn new pickup
-			pPickup->SpawnPickup(this);
-			m_nSize++;
-			// don't decrease in size (effectively adds one to size)
-			m_bIncreasingSize = true;
-		}
 		
 		// find if snake collides with itself
 		std::vector<Node*>::iterator nodeIterator = std::find(m_pSnakeNodes.begin() + 1, m_pSnakeNodes.end(), &m_pGrid->GetNodes()[(int)m_v2HeadNode.x][(int)m_v2HeadNode.y]);
@@ -121,6 +110,16 @@ void Snake::Update(float fDeltaTime, Pickup* pPickup)
 
 		m_lastDirection = m_nextDirection;
 
+		// check if we entered the node with the pickup in it
+		if (m_v2HeadNode == pPickup->GetPickupNode())
+		{
+			// spawn new pickup
+			pPickup->MovePickup(this);
+			m_nSize++;
+			// don't decrease in size (effectively adds one to size)
+			m_bIncreasingSize = true;
+		}
+
 		// remove last tile if not increasing size
 		if (!m_bIncreasingSize)
 			m_pSnakeNodes.pop_back();
@@ -131,12 +130,13 @@ void Snake::Update(float fDeltaTime, Pickup* pPickup)
 
 void Snake::Draw(aie::Renderer2D* pRenderer)
 {
+	pRenderer->setRenderColour(0, 0.8f, 0);
 	// draw snake nodes
 	for (auto& node : m_pSnakeNodes)
 	{
-		pRenderer->setRenderColour(0, 0.8f, 0);
+		
 		pRenderer->drawBox(node->m_v2Position.x, node->m_v2Position.y,
-			node->m_v2Extents.x, node->m_v2Extents.y);
+			node->m_v2Extents.x, node->m_v2Extents.y, 0.f, 10.f);
 	}
 
 	// get all possible eye positions
@@ -153,73 +153,73 @@ void Snake::Draw(aie::Renderer2D* pRenderer)
 			// white part of eyes
 			// top left
 			pRenderer->drawCircle(v2BottomLeftEyePos.x, v2TopRightEyePos.y,
-				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_WHITE_SCALE);
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_WHITE_SCALE, 10.f);
 			// top right
 			pRenderer->drawCircle(v2TopRightEyePos.x, v2TopRightEyePos.y,
-				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_WHITE_SCALE);
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_WHITE_SCALE, 10.f);
 
 			// black part of eyes
 			pRenderer->setRenderColour(0, 0, 0);
 			// top left
 			pRenderer->drawCircle(v2BottomLeftEyePos.x, v2TopRightEyePos.y,
-				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_BLACK_SCALE);
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_BLACK_SCALE, 10.f);
 			// top right
 			pRenderer->drawCircle(v2TopRightEyePos.x, v2TopRightEyePos.y,
-				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_BLACK_SCALE);
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_BLACK_SCALE, 10.f);
 			break;
 		case (eDirection::Right):
 			// white part of eyes
 			// top right
 			pRenderer->drawCircle(v2TopRightEyePos.x, v2TopRightEyePos.y,
-				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_WHITE_SCALE);
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_WHITE_SCALE, 10.f);
 			// bottom right
 			pRenderer->drawCircle(v2TopRightEyePos.x, v2BottomLeftEyePos.y,
-				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_WHITE_SCALE);
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_WHITE_SCALE, 10.f);
 
 			// black part of eyes
 			pRenderer->setRenderColour(0, 0, 0);
 			// top right
 			pRenderer->drawCircle(v2TopRightEyePos.x, v2TopRightEyePos.y,
-				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_BLACK_SCALE);
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_BLACK_SCALE, 10.f);
 			// bottom right
 			pRenderer->drawCircle(v2TopRightEyePos.x, v2BottomLeftEyePos.y,
-				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_BLACK_SCALE);
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_BLACK_SCALE, 10.f);
 			break;
 		case (eDirection::Down):
 			// white part of eyes
 			// bottom left
 			pRenderer->drawCircle(v2BottomLeftEyePos.x, v2BottomLeftEyePos.y,
-				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_WHITE_SCALE);
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_WHITE_SCALE, 10.f);
 			// bottom right
 			pRenderer->drawCircle(v2TopRightEyePos.x, v2BottomLeftEyePos.y,
-				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_WHITE_SCALE);
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_WHITE_SCALE, 10.f);
 
 			// black part of eyes
 			pRenderer->setRenderColour(0, 0, 0);
 			// bottom left
 			pRenderer->drawCircle(v2BottomLeftEyePos.x, v2BottomLeftEyePos.y,
-				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_BLACK_SCALE);
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_BLACK_SCALE, 10.f);
 			// bottom right
 			pRenderer->drawCircle(v2TopRightEyePos.x, v2BottomLeftEyePos.y,
-				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_BLACK_SCALE);
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_BLACK_SCALE, 10.f);
 			break;
 		case (eDirection::Left):
 			// white part of eyes
 			// bottom left
 			pRenderer->drawCircle(v2BottomLeftEyePos.x, v2BottomLeftEyePos.y,
-				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_WHITE_SCALE);
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_WHITE_SCALE, 10.f);
 			// top left
 			pRenderer->drawCircle(v2BottomLeftEyePos.x, v2TopRightEyePos.y,
-				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_WHITE_SCALE);
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_WHITE_SCALE, 10.f);
 
 			// black part of eyes
 			pRenderer->setRenderColour(0, 0, 0);
 			// bottom left
 			pRenderer->drawCircle(v2BottomLeftEyePos.x, v2BottomLeftEyePos.y,
-				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_BLACK_SCALE);
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_BLACK_SCALE, 10.f);
 			// top left
 			pRenderer->drawCircle(v2BottomLeftEyePos.x, v2TopRightEyePos.y,
-				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_BLACK_SCALE);
+				((m_pSnakeNodes[0]->m_v2Extents.x + m_pSnakeNodes[0]->m_v2Extents.y) * 0.5f) * EYE_BLACK_SCALE, 10.f);
 			break;
 	}
 }

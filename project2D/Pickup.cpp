@@ -14,10 +14,6 @@ Pickup::~Pickup()
 {
 }
 
-void Pickup::Update(float fDeltaTime)
-{
-}
-
 void Pickup::Draw(aie::Renderer2D* pRenderer)
 {
 	// get reference to node with pickup
@@ -28,7 +24,7 @@ void Pickup::Draw(aie::Renderer2D* pRenderer)
 		pNode->m_v2Extents.x, pNode->m_v2Extents.y);
 }
 
-void Pickup::SpawnPickup(Snake* pSnake)
+void Pickup::MovePickup(Snake* pSnake)
 {
 	bool bFoundSpot = false;
 	std::vector<Node*> pSnakeNodes = pSnake->GetSnakeNodes();
