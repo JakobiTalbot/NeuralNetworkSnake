@@ -6,9 +6,10 @@ class NeuralNetwork
 {
 public:
 	NeuralNetwork(int nInputLayerNeuronCount, int nHiddenLayerCount, int nHiddenLayerNeuronCount, int nOutputLayerNeuronCount, float fLearningRate = 0.1f);
+	NeuralNetwork(NeuralNetwork& network);
 	~NeuralNetwork();
 
-	void Guess(const int* pInput, int* pOutput);
+	void Guess(const int* pInput, float* pOutput);
 	void Propagate(const int* pInputs, const int* pTargets);
 
 	void Mutate(float fMutationRate);

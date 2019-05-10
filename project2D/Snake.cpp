@@ -20,7 +20,7 @@ Snake::~Snake()
 {
 }
 
-void Snake::Update(float fDeltaTime, Pickup* pPickup)
+void Snake::Update(float fDeltaTime)
 {
 	aie::Input* pInput = aie::Input::getInstance();
 
@@ -149,10 +149,10 @@ void Snake::Update(float fDeltaTime, Pickup* pPickup)
 		m_lastDirection = m_nextDirection;
 
 		// check if we entered the node with the pickup in it
-		if (m_v2HeadNode == pPickup->GetPickupNode())
+		if (m_v2HeadNode == Pickup::GetInstance()->GetPickupNode())
 		{
 			// spawn new pickup
-			pPickup->MovePickup(this);
+			Pickup::GetInstance()->MovePickup(this);
 			m_nSize++;
 			// don't decrease in size (effectively adds one to size)
 			m_bIncreasingSize = true;

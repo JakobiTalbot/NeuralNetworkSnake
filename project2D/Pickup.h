@@ -28,9 +28,13 @@ public:
 	*/
 	glm::vec2 GetPickupNode() { return m_v2PickupNode; }
 
+	static Pickup* GetInstance() { return m_pInstance; }
+
 private:
 	// stores a reference to the grid
 	Grid* m_pGrid;
 	// stores the coordinates of the node where the pickup is located on the grid
 	glm::vec2 m_v2PickupNode;
+
+	static Pickup* m_pInstance;
 };

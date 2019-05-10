@@ -178,6 +178,7 @@
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="NeuralNetwork.cpp" />
     <ClCompile Include="NeuralSnake.cpp" />
+    <ClCompile Include="NeuralSnakeEnvironment.cpp" />
     <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="Snake.cpp" />
   </ItemGroup>
@@ -188,6 +189,7 @@
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="NeuralNetwork.h" />
     <ClInclude Include="NeuralSnake.h" />
+    <ClInclude Include="NeuralSnakeEnvironment.h" />
     <ClInclude Include="Pickup.h" />
     <ClInclude Include="Snake.h" />
   </ItemGroup>

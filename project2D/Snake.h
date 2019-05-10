@@ -25,9 +25,8 @@ public:
 	/*	@brief Gets directional input each frame and moves the snake each time step,
 		 increases size of snake when colliding with pickup
 		@param The time since the last frame
-		@param Reference to the pickup
 	*/
-	void Update(float fDeltaTime, Pickup* pPickup);
+	void Update(float fDeltaTime);
 
 	/*	@brief Draws the snake's nodes to screen each frame
 		@param Renderer2D to be drawn to

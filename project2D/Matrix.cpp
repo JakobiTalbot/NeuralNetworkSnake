@@ -7,7 +7,7 @@ Matrix::Matrix(int rows, int cols)
 	: m_rowCount(rows), m_colCount(cols)
 {
 	m_values = new float*[rows];
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 
 	// initialize all elements to 0
 	for (int i = 0; i < rows; ++i)

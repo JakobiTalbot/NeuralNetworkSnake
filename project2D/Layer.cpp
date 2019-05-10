@@ -3,18 +3,21 @@
 Layer::Layer(int nNeuronCount, int nLastLayerNeuronCount)
 {
 	m_nNeuronCount = nNeuronCount;
-	if (nLastLayerNeuronCount > 0)
-	{
-		m_pWeights = new Matrix(nNeuronCount, nLastLayerNeuronCount);
-		m_pBiases = new Matrix(nNeuronCount, 1);
-	}
+	m_pWeights = new Matrix(nNeuronCount, nLastLayerNeuronCount);
+	m_pBiases = new Matrix(nNeuronCount, 1);
+}
+
+Layer::Layer(Layer& layer)
+{
+	m_nNeuronCount = layer.m_nNeuronCount;
+	m_pWeights = new Matrix(*layer.m_pWeights);
+	m_pBiases = new Matrix(*layer.m_pBiases);
 }
 
 Layer::~Layer()
 {
-	if (!m_pWeights)
-		return;
-
 	delete m_pWeights;
+	m_pWeights = nullptr;
 	delete m_pBiases;
+	m_pBiases = nullptr;
 }

@@ -5,6 +5,7 @@ class Layer
 {
 public:
 	Layer(int nNeuronCount, int nLastLayerNeuronCount = 0);
+	Layer(Layer& layer);
 	~Layer();
 
 	Matrix* GetWeightMatrix() { return m_pWeights; }

@@ -1,15 +1,15 @@
 #pragma once
 #include <vector>
 #include "Renderer2D.h"
+#include "Grid.h"
 #include <glm/glm.hpp>
 class Grid;
-class Pickup;
 class Application2D;
 class NeuralNetwork;
 struct Node;
 
 // the directions in which the snake can move in
-enum class eDirection
+enum class eNeuralDirection
 {
 	Up = 0,
 	Right,
@@ -20,15 +20,13 @@ enum class eDirection
 class NeuralSnake
 {
 public:
-	NeuralSnake(Grid* pGrid, bool bWrapAround);
+	NeuralSnake(Grid* pGrid, NeuralNetwork* pNeuralNetwork, bool bWrapAround);
 	~NeuralSnake();
 
-	/*	@brief Gets directional input each frame and moves the snake each time step,
-		 increases size of snake when colliding with pickup
+	/*	@brief 
 		@param The time since the last frame
-		@param Reference to the pickup
 	*/
-	void Update(float fDeltaTime, Pickup* pPickup);
+	bool Update(float fDeltaTime);
 
 	/*	@brief Draws the snake's nodes to screen each frame
 		@param Renderer2D to be drawn to
@@ -40,15 +38,25 @@ public:
 	*/
 	std::vector<Node*> GetSnakeNodes() { return m_pSnakeNodes; }
 
+	/*	@brief Gets the size of the snake
+		@return The size of the snake
+	*/
+	int GetSize() { return m_nSize; }
+	
+	/*	@brief Gets the move count of the snake
+		@return The number of times the snake has moved
+	*/
+	int GetMoves() { return m_nMoveCount; }
+
 private:
 	// stores a reference to the playing grid
 	Grid* m_pGrid;
 	// holds all the nodes the snake is inhabiting
 	std::vector<Node*> m_pSnakeNodes;
 	// the next direction to move in
-	eDirection m_nextDirection;
+	eNeuralDirection m_nextDirection;
 	// the last direction the snake moved
-	eDirection m_lastDirection;
+	eNeuralDirection m_lastDirection;
 	// the coordinates of the head node of the snake
 	glm::vec2 m_v2HeadNode;
 	// the timer until the snake moves next
@@ -63,8 +71,12 @@ private:
 	// neural net
 	NeuralNetwork* m_pNeuralNetwork;
 
+	int m_nMoveCount = 0;
+
+	bool m_bSnakeNodes[GRID_WIDTH * GRID_HEIGHT];
+
 	// time between each snake movement (seconds)
-	const float TIME_BETWEEN_MOVEMENTS = 0.4f;
+	const float TIME_BETWEEN_MOVEMENTS = 0.1f;
 	// scale of the white part of the snake's eye
 	const float EYE_WHITE_SCALE = 0.1f;
 	// sclae of the black part of the snake's eye
