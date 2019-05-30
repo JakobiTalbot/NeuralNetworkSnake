@@ -102,6 +102,31 @@ void NeuralNetwork::Mutate(float fMutationRate)
 	}
 }
 
+int NeuralNetwork::RouletteSelect(int fitnesses[], int nFitnessesCount)
+{
+	// get total fitness
+	int nTotalFitness = 0;
+	for (int i = 0; i < nFitnessesCount; ++i)
+	{
+		nTotalFitness += fitnesses[i];
+	}
+
+	// select a number between 0 and total fitness
+	int selectedNum = rand() % nTotalFitness;
+	int lastMaxNum = 0;
+	// find which fitness was selected
+	for (int i = 0; i < nFitnessesCount; ++i)
+	{
+		lastMaxNum += fitnesses[i];
+		if (lastMaxNum <= selectedNum)
+		{
+			return i;
+		}
+	}
+	// return last number
+	return nFitnessesCount - 1;
+}
+
 float Sigmoid(float x)
 {
 	float ex = expf(x);

@@ -69,6 +69,8 @@ void NeuralSnakeEnvironment::Draw(aie::Renderer2D* pRenderer)
 
 void NeuralSnakeEnvironment::CreateNewGeneration()
 {
+	// get new neural network base
+	NeuralNetwork* nn = new NeuralNetwork(m_pSnakes[m_pNeuralNetwork->RouletteSelect(m_nSnakeFitnesses, SNAKE_COUNT)]);
 	// reset current snake index
 	m_iCurrentSnake = 0;
 	for (auto& snake : m_pSnakes)
@@ -76,8 +78,6 @@ void NeuralSnakeEnvironment::CreateNewGeneration()
 		delete snake;
 	}
 	m_pSnakes.clear();
-
-	// create new neural network base
 
 
 	// create snakes

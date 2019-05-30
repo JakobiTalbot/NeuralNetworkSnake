@@ -17,6 +17,8 @@ public:
 	float GetLearningRate() { return m_fLearningRate; }
 	void SetLearningRate(float fLearningRate) { m_fLearningRate = fLearningRate; }
 
+	int RouletteSelect(int fitnesses[], int nFitnessesCount);
+
 private:
 	std::vector<Layer*> m_pLayers;
 	float m_fLearningRate;
