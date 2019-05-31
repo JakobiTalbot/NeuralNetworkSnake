@@ -9,7 +9,7 @@ public:
 	NeuralNetwork(NeuralNetwork& network);
 	~NeuralNetwork();
 
-	void Guess(const int* pInput, float* pOutput);
+	void Guess(const float* pInput, float* pOutput);
 	void Propagate(const int* pInputs, const int* pTargets);
 
 	void Mutate(float fMutationRate);

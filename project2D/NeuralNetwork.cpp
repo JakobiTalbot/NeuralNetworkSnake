@@ -38,7 +38,7 @@ NeuralNetwork::~NeuralNetwork()
 	m_pLayers.clear();
 }
 
-void NeuralNetwork::Guess(const int* pInput, float* pOutput)
+void NeuralNetwork::Guess(const float* pInput, float* pOutput)
 {
 	Matrix mLastLayer = Matrix(m_pLayers[0]->GetNeuronCount(), 1);
 
@@ -129,6 +129,6 @@ int NeuralNetwork::RouletteSelect(int fitnesses[], int nFitnessesCount)
 
 float Sigmoid(float x)
 {
-	float ex = expf(x);
-	return ex / (ex + 1);
+	float ex = expf(-x);
+	return 1 / (1 + ex);
 }

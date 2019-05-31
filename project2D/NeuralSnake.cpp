@@ -9,11 +9,12 @@
 #define HIDDEN_LAYER_COUNT 2
 #define HIDDEN_NEURON_COUNT 8
 #define OUTPUT_NEURON_COUNT 4
-NeuralSnake::NeuralSnake(Grid* pGrid, NeuralNetwork* pNeuralNetwork, bool bWrapAround)
+NeuralSnake::NeuralSnake(Grid* pGrid, NeuralNetwork* pNeuralNetwork, bool bWrapAround, float fMutationRate, float fTimestep)
 {
 	m_pGrid = pGrid;
 	m_bWrapAround = bWrapAround;
-	m_fTimeToNextMove = TIME_BETWEEN_MOVEMENTS;
+	m_fTimeToNextMove = fTimestep;
+	m_fTimestep = fTimestep;
 	m_nextDirection = eNeuralDirection::Up;
 	m_lastDirection = eNeuralDirection::Up;
 	// start in centre
@@ -21,6 +22,7 @@ NeuralSnake::NeuralSnake(Grid* pGrid, NeuralNetwork* pNeuralNetwork, bool bWrapA
 	m_pSnakeNodes.insert(m_pSnakeNodes.begin(), &m_pGrid->GetNodes()[(int)m_v2HeadNode.x][(int)m_v2HeadNode.y]);
 	// copy master neural network
 	m_pNeuralNetwork = new NeuralNetwork(*pNeuralNetwork);
+	m_pNeuralNetwork->Mutate(fMutationRate);
 }
 
 NeuralSnake::~NeuralSnake()
@@ -30,40 +32,26 @@ NeuralSnake::~NeuralSnake()
 
 bool NeuralSnake::Update(float fDeltaTime)
 {
-	m_pNeuralNetwork->Mutate(1.f);
 	m_fTimeToNextMove -= fDeltaTime;
 	// move
 	while (m_fTimeToNextMove <= 0.f)
 	{
 		// add time to timer
-		m_fTimeToNextMove += TIME_BETWEEN_MOVEMENTS;
-
-		// input 0-1: offset x-y to food
-		// input 2-5: closest obstacle (U-R-D-L)
-		int* nInput = new int[INPUT_NEURON_COUNT];
-		// intialise inputs to defaults
-		nInput[0] = GRID_WIDTH + 1;
-		nInput[1] = GRID_HEIGHT + 1;
-		nInput[2] = GRID_HEIGHT - m_v2HeadNode.y;
-		nInput[3] = GRID_WIDTH - m_v2HeadNode.x;
-		nInput[4] = m_v2HeadNode.y + 1;
-		nInput[5] = m_v2HeadNode.x + 1;
-
+		m_fTimeToNextMove += m_fTimestep;
 		// get pickup instance
 		Pickup* pPickup = Pickup::GetInstance();
-
 		// get distance to food in x and y coordinates
 		glm::vec2 v2DistanceToFood = pPickup->GetPickupNode() - m_v2HeadNode;
-		
-		// find distance to food
-		if (pPickup->GetPickupNode().y == m_v2HeadNode.y)
-		{
-			nInput[0] = v2DistanceToFood.x;
-		}
-		if (pPickup->GetPickupNode().x == m_v2HeadNode.x)
-		{
-			nInput[1] = v2DistanceToFood.y;
-		}
+		// input 0-1: offset x-y to food
+		// input 2-5: closest obstacle (U-R-D-L)
+		float nInput[INPUT_NEURON_COUNT];
+		// intialise inputs to defaults
+		nInput[0] = (v2DistanceToFood.x / GRID_WIDTH) / 2 + 0.5f;
+		nInput[1] = (v2DistanceToFood.y / GRID_HEIGHT) / 2 + 0.5f;
+		nInput[2] = (GRID_HEIGHT - m_v2HeadNode.y) / GRID_HEIGHT;
+		nInput[3] = (GRID_WIDTH - m_v2HeadNode.x) / GRID_WIDTH;
+		nInput[4] = m_v2HeadNode.y / GRID_HEIGHT;
+		nInput[5] = m_v2HeadNode.x / GRID_WIDTH;
 
 		// find obstacles up
 		for (int y = m_v2HeadNode.y + 1; y < GRID_HEIGHT; ++y)
@@ -72,7 +60,8 @@ bool NeuralSnake::Update(float fDeltaTime)
 			if (nodeIterator != m_pSnakeNodes.end()
 				&& nodeIterator != m_pSnakeNodes.end() - 1)
 			{
-				nInput[2] = y - (int)m_v2HeadNode.y;
+				nInput[2] =( y - (int)m_v2HeadNode.y) / GRID_HEIGHT;
+				break;
 			}
 		}
 		// find obstacles to the right
@@ -82,7 +71,8 @@ bool NeuralSnake::Update(float fDeltaTime)
 			if (nodeIterator != m_pSnakeNodes.end()
 				&& nodeIterator != m_pSnakeNodes.end() - 1)
 			{
-				nInput[3] = x - m_v2HeadNode.x;
+				nInput[3] = (x - m_v2HeadNode.x) / GRID_WIDTH;
+				break;
 			}
 		}
 		// find obstacles down
@@ -92,7 +82,8 @@ bool NeuralSnake::Update(float fDeltaTime)
 			if (nodeIterator != m_pSnakeNodes.end()
 				&& nodeIterator != m_pSnakeNodes.end() - 1)
 			{
-				nInput[4] = y;
+				nInput[4] = y / GRID_HEIGHT;
+				break;
 			}
 		}
 		// find obstacles to the left
@@ -102,17 +93,16 @@ bool NeuralSnake::Update(float fDeltaTime)
 			if (nodeIterator != m_pSnakeNodes.end()
 				&& nodeIterator != m_pSnakeNodes.end() - 1)
 			{
-				nInput[5] = x;
+				nInput[5] = x / GRID_WIDTH;
+				break;
 			}
 		}
 
+
 		// create array to store output
-		float* fOutput = new float[OUTPUT_NEURON_COUNT];
+		float fOutput[OUTPUT_NEURON_COUNT];
 		// get output
 		m_pNeuralNetwork->Guess(nInput, fOutput);
-
-		// delete input
-		delete[] nInput;
 
 		float fBestOutput = 0.f;
 		for (int i = 0; i < OUTPUT_NEURON_COUNT; ++i)
@@ -134,7 +124,6 @@ bool NeuralSnake::Update(float fDeltaTime)
 			}
 		}
 
-		delete[] fOutput;
 		// move in direction
 		switch (m_nextDirection)
 		{

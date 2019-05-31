@@ -20,7 +20,7 @@ enum class eNeuralDirection
 class NeuralSnake
 {
 public:
-	NeuralSnake(Grid* pGrid, NeuralNetwork* pNeuralNetwork, bool bWrapAround);
+	NeuralSnake(Grid* pGrid, NeuralNetwork* pNeuralNetwork, bool bWrapAround, float fMutationRate, float fTimestep);
 	~NeuralSnake();
 
 	/*	@brief 
@@ -47,6 +47,11 @@ public:
 		@return The number of times the snake has moved
 	*/
 	int GetMoves() { return m_nMoveCount; }
+
+	void SeedRandom(unsigned int nSeed) { srand(nSeed); }
+
+	NeuralNetwork* GetNeuralNetwork() { return m_pNeuralNetwork; }
+	void SetTimestep(float fTimestep) { m_fTimestep = fTimestep; m_fTimeToNextMove = fTimestep; }
 
 private:
 	// stores a reference to the playing grid
@@ -76,7 +81,7 @@ private:
 	bool m_bSnakeNodes[GRID_WIDTH * GRID_HEIGHT];
 
 	// time between each snake movement (seconds)
-	const float TIME_BETWEEN_MOVEMENTS = 0.1f;
+	float m_fTimestep = 0.1f;
 	// scale of the white part of the snake's eye
 	const float EYE_WHITE_SCALE = 0.1f;
 	// sclae of the black part of the snake's eye

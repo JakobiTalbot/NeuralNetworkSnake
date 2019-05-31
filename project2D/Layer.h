@@ -4,7 +4,7 @@ class Matrix;
 class Layer
 {
 public:
-	Layer(int nNeuronCount, int nLastLayerNeuronCount = 0);
+	Layer(int nNeuronCount, int nLastLayerNeuronCount = 1);
 	Layer(Layer& layer);
 	~Layer();
 

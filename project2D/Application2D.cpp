@@ -14,6 +14,7 @@ Application2D::Application2D()
 	m_pGrid = nullptr;
 	m_pSnake = nullptr;
 	m_pPickup = nullptr;
+	setVSync(false);
 }
 
 Application2D::~Application2D()

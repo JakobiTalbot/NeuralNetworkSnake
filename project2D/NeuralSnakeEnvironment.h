@@ -22,9 +22,13 @@ private:
 	std::vector<NeuralSnake*> m_pSnakes;
 	aie::Font* m_pFont;
 
+	float m_fSnakeTimestep = 0.2f;
+
 	int m_nCurrentGeneration = 0;
 	Grid* m_pGrid;
 
 	int m_iCurrentSnake = 0;
 	int m_nSnakeFitnesses[SNAKE_COUNT];
+
+	unsigned int m_seed;
 };
