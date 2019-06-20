@@ -9,16 +9,12 @@
 #include <random>
 #include <time.h>
 
-#define INPUT_NEURON_COUNT 6
-#define HIDDEN_LAYER_COUNT 2
-#define HIDDEN_NEURON_COUNT 8
-#define OUTPUT_NEURON_COUNT 4
+
 NeuralSnakeEnvironment::NeuralSnakeEnvironment(Grid* pGrid)
 {
 	m_pFont = new aie::Font("./font/consolas.ttf", 16);
 	// initialise neural network
 	m_pNeuralNetwork = new NeuralNetwork(INPUT_NEURON_COUNT, HIDDEN_LAYER_COUNT, HIDDEN_NEURON_COUNT, OUTPUT_NEURON_COUNT);
-	m_pNeuralNetwork->Mutate(1.f);
 	// create snakes
 	for (int i = 0; i < SNAKE_COUNT; ++i)
 		m_pSnakes.push_back(new NeuralSnake(pGrid, m_pNeuralNetwork, false, 0.05f, m_fSnakeTimestep));
@@ -57,7 +53,7 @@ void NeuralSnakeEnvironment::Update(float fDeltaTime)
 	if (!m_pSnakes[m_iCurrentSnake]->Update(fDeltaTime))
 	{
 		// get fitness
-		m_nSnakeFitnesses[m_iCurrentSnake] = (m_pSnakes[m_iCurrentSnake]->GetSize() * 100.f) + m_pSnakes[m_iCurrentSnake]->GetMoves();
+		m_nSnakeFitnesses[m_iCurrentSnake] = ((m_pSnakes[m_iCurrentSnake]->GetSize() - 1) * 50.f) + m_pSnakes[m_iCurrentSnake]->GetMoves();
 		// go to next snake if current one dies
 		m_iCurrentSnake++;
 		// create new generation if through each snake
@@ -103,7 +99,7 @@ void NeuralSnakeEnvironment::CreateNewGeneration()
 	m_seed = (unsigned int)time(NULL);
 	// create snakes
 	for (int i = 0; i < SNAKE_COUNT; ++i)
-		m_pSnakes.push_back(new NeuralSnake(m_pGrid, m_pNeuralNetwork, false, 0.05f, m_fSnakeTimestep));
+		m_pSnakes.push_back(new NeuralSnake(m_pGrid, m_pNeuralNetwork, false, 0.1f, m_fSnakeTimestep));
 
 	m_nCurrentGeneration++;
 }

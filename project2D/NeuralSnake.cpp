@@ -7,7 +7,7 @@
 
 #define INPUT_NEURON_COUNT 6
 #define HIDDEN_LAYER_COUNT 2
-#define HIDDEN_NEURON_COUNT 8
+#define HIDDEN_NEURON_COUNT 6
 #define OUTPUT_NEURON_COUNT 4
 NeuralSnake::NeuralSnake(Grid* pGrid, NeuralNetwork* pNeuralNetwork, bool bWrapAround, float fMutationRate, float fTimestep)
 {
@@ -98,11 +98,20 @@ bool NeuralSnake::Update(float fDeltaTime)
 			}
 		}
 
-
 		// create array to store output
 		float fOutput[OUTPUT_NEURON_COUNT];
 		// get output
-		m_pNeuralNetwork->Guess(nInput, fOutput);
+		m_pNeuralNetwork->GetOutput(nInput, fOutput);
+
+		system("cls");
+		// debug print
+		for (int i = 0; i < INPUT_NEURON_COUNT; ++i)
+		{
+			if (i < OUTPUT_NEURON_COUNT)
+				printf("INPUT %i: %.3f\tOUTPUT %i: %.3f\n", i, nInput[i], i, fOutput[i]);
+			else
+				printf("INPUT %i: %.3f\n", i, nInput[i]);
+		}
 
 		float fBestOutput = 0.f;
 		for (int i = 0; i < OUTPUT_NEURON_COUNT; ++i)

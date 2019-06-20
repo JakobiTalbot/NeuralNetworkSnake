@@ -336,6 +336,6 @@ void Matrix::mutate(float rate)
 {
 	for (int y = 0; y < m_rowCount; ++y)
 		for (int x = 0; x < m_colCount; ++x)
-			if ((rand() % 1000) / 1000.f < rate)
+			if ((rand() % 1000) / 1000.f <= rate)
 				m_values[y][x] = (rand() % 1000) / 1000.f;
 }
