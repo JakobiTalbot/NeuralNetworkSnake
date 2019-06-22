@@ -17,7 +17,7 @@ NeuralSnakeEnvironment::NeuralSnakeEnvironment(Grid* pGrid)
 	m_pNeuralNetwork = new NeuralNetwork(INPUT_NEURON_COUNT, HIDDEN_LAYER_COUNT, HIDDEN_NEURON_COUNT, OUTPUT_NEURON_COUNT);
 	// create snakes
 	for (int i = 0; i < SNAKE_COUNT; ++i)
-		m_pSnakes.push_back(new NeuralSnake(pGrid, m_pNeuralNetwork, false, 0.05f, m_fSnakeTimestep));
+		m_pSnakes.push_back(new NeuralSnake(pGrid, m_pNeuralNetwork, false, 0.5f, m_fSnakeTimestep));
 
 	m_seed = (unsigned int)time(NULL);
 	m_pSnakes[0]->SeedRandom(m_seed);
@@ -100,6 +100,6 @@ void NeuralSnakeEnvironment::CreateNewGeneration()
 	// create snakes
 	for (int i = 0; i < SNAKE_COUNT; ++i)
 		m_pSnakes.push_back(new NeuralSnake(m_pGrid, m_pNeuralNetwork, false, 0.1f, m_fSnakeTimestep));
-
+	m_pSnakes[0]->SeedRandom(m_seed);
 	m_nCurrentGeneration++;
 }

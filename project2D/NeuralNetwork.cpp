@@ -1,6 +1,7 @@
 #include "NeuralNetwork.h"
 #include "Layer.h"
 #include "Matrix.h"
+#include <math.h>
 NeuralNetwork::NeuralNetwork(int nInputLayerNeuronCount, int nHiddenLayerCount, int nHiddenLayerNeuronCount, int nOutputLayerNeuronCount)
 {
 	// create input layer
@@ -15,11 +16,11 @@ NeuralNetwork::NeuralNetwork(int nInputLayerNeuronCount, int nHiddenLayerCount, 
 	m_pLayers.push_back(new Layer(nOutputLayerNeuronCount, nHiddenLayerNeuronCount));
 
 	// randomly set weight and bias matrices for all layers except input layer
-	for (int i = 1; i < m_pLayers.size(); ++i)
-	{		
-		m_pLayers[i]->GetWeightMatrix()->randomize();
-		m_pLayers[i]->GetBiasMatrix()->randomize();
-	}
+	//for (int i = 1; i < m_pLayers.size(); ++i)
+	//{		
+	//	m_pLayers[i]->GetWeightMatrix()->randomize();
+	//	m_pLayers[i]->GetBiasMatrix()->randomize();
+	//}
 	m_nOutputNeuronCount = nOutputLayerNeuronCount;
 }
 
@@ -52,7 +53,7 @@ void NeuralNetwork::GetOutput(const float* pInput, float* pOutput)
 	{
 		mOutput = m_pLayers[i]->GetWeightMatrix()->product(mOutput); 
 		mOutput = mOutput + *m_pLayers[i]->GetBiasMatrix();
-		mOutput.map(Sigmoid);
+		mOutput.map(Tanh);
 	}
 
 	// set outputs
@@ -98,4 +99,9 @@ float Sigmoid(float x)
 {
 	float ex = expf(-x);
 	return 1 / (1 + ex);
+}
+
+float Tanh(float x)
+{
+	return (float)tanh(x);
 }

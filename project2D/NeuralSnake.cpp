@@ -44,14 +44,20 @@ bool NeuralSnake::Update(float fDeltaTime)
 		glm::vec2 v2DistanceToFood = pPickup->GetPickupNode() - m_v2HeadNode;
 		// input 0-1: offset x-y to food
 		// input 2-5: closest obstacle (U-R-D-L)
-		float nInput[INPUT_NEURON_COUNT];
+		float fInput[INPUT_NEURON_COUNT];
 		// intialise inputs to defaults
-		nInput[0] = (v2DistanceToFood.x / GRID_WIDTH) / 2 + 0.5f;
-		nInput[1] = (v2DistanceToFood.y / GRID_HEIGHT) / 2 + 0.5f;
-		nInput[2] = (GRID_HEIGHT - m_v2HeadNode.y) / GRID_HEIGHT;
-		nInput[3] = (GRID_WIDTH - m_v2HeadNode.x) / GRID_WIDTH;
-		nInput[4] = m_v2HeadNode.y / GRID_HEIGHT;
-		nInput[5] = m_v2HeadNode.x / GRID_WIDTH;
+		fInput[0] = (v2DistanceToFood.x / GRID_WIDTH);
+		fInput[1] = (v2DistanceToFood.y / GRID_HEIGHT);
+		fInput[2] = (((GRID_HEIGHT - m_v2HeadNode.y) / GRID_HEIGHT) - 0.5f) * 2.f;
+		fInput[3] = (((GRID_WIDTH - m_v2HeadNode.x) / GRID_WIDTH) - 0.5f) * 2.f;
+		fInput[4] = ((m_v2HeadNode.y / GRID_HEIGHT) - 0.5f) * 2.f;
+		fInput[5] = ((m_v2HeadNode.x / GRID_WIDTH) - 0.5f) * 2.f;
+		//fInput[0] = (v2DistanceToFood.x / GRID_WIDTH) / 2.f + 0.5f;
+		//fInput[1] = (v2DistanceToFood.y / GRID_HEIGHT) / 2.f + 0.5f;
+		//fInput[2] = ((GRID_HEIGHT - m_v2HeadNode.y) / GRID_HEIGHT);
+		//fInput[3] = ((GRID_WIDTH - m_v2HeadNode.x) / GRID_WIDTH);
+		//fInput[4] = (m_v2HeadNode.y / GRID_HEIGHT);
+		//fInput[5] = (m_v2HeadNode.x / GRID_WIDTH);
 
 		// find obstacles up
 		for (int y = m_v2HeadNode.y + 1; y < GRID_HEIGHT; ++y)
@@ -60,7 +66,7 @@ bool NeuralSnake::Update(float fDeltaTime)
 			if (nodeIterator != m_pSnakeNodes.end()
 				&& nodeIterator != m_pSnakeNodes.end() - 1)
 			{
-				nInput[2] =( y - (int)m_v2HeadNode.y) / GRID_HEIGHT;
+				fInput[2] = (y - (int)m_v2HeadNode.y) / GRID_HEIGHT;
 				break;
 			}
 		}
@@ -71,7 +77,7 @@ bool NeuralSnake::Update(float fDeltaTime)
 			if (nodeIterator != m_pSnakeNodes.end()
 				&& nodeIterator != m_pSnakeNodes.end() - 1)
 			{
-				nInput[3] = (x - m_v2HeadNode.x) / GRID_WIDTH;
+				fInput[3] = (x - (int)m_v2HeadNode.x) / GRID_WIDTH;
 				break;
 			}
 		}
@@ -82,7 +88,7 @@ bool NeuralSnake::Update(float fDeltaTime)
 			if (nodeIterator != m_pSnakeNodes.end()
 				&& nodeIterator != m_pSnakeNodes.end() - 1)
 			{
-				nInput[4] = y / GRID_HEIGHT;
+				fInput[4] = y / GRID_HEIGHT;
 				break;
 			}
 		}
@@ -93,7 +99,7 @@ bool NeuralSnake::Update(float fDeltaTime)
 			if (nodeIterator != m_pSnakeNodes.end()
 				&& nodeIterator != m_pSnakeNodes.end() - 1)
 			{
-				nInput[5] = x / GRID_WIDTH;
+				fInput[5] = x / GRID_WIDTH;
 				break;
 			}
 		}
@@ -101,16 +107,16 @@ bool NeuralSnake::Update(float fDeltaTime)
 		// create array to store output
 		float fOutput[OUTPUT_NEURON_COUNT];
 		// get output
-		m_pNeuralNetwork->GetOutput(nInput, fOutput);
+		m_pNeuralNetwork->GetOutput(fInput, fOutput);
 
 		system("cls");
 		// debug print
 		for (int i = 0; i < INPUT_NEURON_COUNT; ++i)
 		{
 			if (i < OUTPUT_NEURON_COUNT)
-				printf("INPUT %i: %.3f\tOUTPUT %i: %.3f\n", i, nInput[i], i, fOutput[i]);
+				printf("INPUT %i: %.3f\tOUTPUT %i: %.3f\n", i, fInput[i], i, fOutput[i]);
 			else
-				printf("INPUT %i: %.3f\n", i, nInput[i]);
+				printf("INPUT %i: %.3f\n", i, fInput[i]);
 		}
 
 		float fBestOutput = 0.f;

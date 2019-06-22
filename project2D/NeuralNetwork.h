@@ -2,6 +2,7 @@
 #include <vector>
 class Layer;
 float Sigmoid(float x);
+float Tanh(float x);
 class NeuralNetwork
 {
 public:
