@@ -241,23 +241,28 @@ bool NeuralSnake::Update(float fDeltaTime)
 		}
 
 		m_lastDirection = m_nextDirection;
-		m_nMoveCount++;
-
+		m_nMovesSinceLastFood++;
 		// check if we entered the node with the pickup in it
 		if (m_v2HeadNode == pPickup->GetPickupNode())
 		{
 			// spawn new pickup
 			pPickup->MovePickupNeural(this);
 			m_nSize++;
+			m_nMovesSinceLastFood = 0;
 			// don't decrease in size (effectively adds one to size)
 			m_bIncreasingSize = true;
 		}
+
+		if (m_nMovesSinceLastFood >= 40)
+			return false;
 
 		// remove last tile if not increasing size
 		if (!m_bIncreasingSize)
 			m_pSnakeNodes.pop_back();
 		else
 			m_bIncreasingSize = false;
+
+		m_nMoves++;
 	}
 
 	// return true if still alive

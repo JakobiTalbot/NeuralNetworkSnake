@@ -2,8 +2,8 @@
 #include "glm/glm.hpp"
 #include "Renderer2D.h"
 // defines the size of the grid to be created
-#define GRID_WIDTH 10
-#define GRID_HEIGHT 10
+#define GRID_WIDTH 11
+#define GRID_HEIGHT 11
 // stores values for a node
 struct Node
 {

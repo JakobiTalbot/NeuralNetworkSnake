@@ -3,9 +3,11 @@
 #include "Renderer2D.h"
 #include "Grid.h"
 #include <glm/glm.hpp>
+#include "NeuralNetwork.h"
+#include <time.h>
 class Grid;
 class Application2D;
-class NeuralNetwork;
+//class NeuralNetwork;
 struct Node;
 
 #define INPUT_NEURON_COUNT 6
@@ -46,11 +48,8 @@ public:
 		@return The size of the snake
 	*/
 	int GetSize() { return m_nSize; }
-	
-	/*	@brief Gets the move count of the snake
-		@return The number of times the snake has moved
-	*/
-	int GetMoves() { return m_nMoveCount; }
+
+	int GetMoves() { return m_nMoves; }
 
 	void SeedRandom(unsigned int nSeed) { srand(nSeed); }
 
@@ -80,7 +79,8 @@ private:
 	// neural net
 	NeuralNetwork* m_pNeuralNetwork;
 
-	int m_nMoveCount = 0;
+	int m_nMovesSinceLastFood = 0;
+	int m_nMoves = 0;
 
 	bool m_bSnakeNodes[GRID_WIDTH * GRID_HEIGHT];
 

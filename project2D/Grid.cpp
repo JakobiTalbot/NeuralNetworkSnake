@@ -39,16 +39,9 @@ void Grid::Draw(aie::Renderer2D* pRenderer)
 {
 	static float x = (float)Application2D::GetInstance()->getWindowWidth() / GRID_WIDTH;
 	static float y = (float)Application2D::GetInstance()->getWindowHeight() / GRID_HEIGHT;
-	// draw grid
+	// draw grid lines
 	for (int i = 0; i < GRID_WIDTH; ++i)
 	{
-		for (int j = 0; j < GRID_HEIGHT; ++j)
-		{
-			pRenderer->setRenderColour(0.3f, 0.3f, 0.3f);
-			pRenderer->drawBox(m_pNodes[i][j].m_v2Position.x, m_pNodes[i][j].m_v2Position.y,
-				m_pNodes[i][j].m_v2Extents.x, m_pNodes[i][j].m_v2Extents.y, 0.f, 100.f);
-		}
-
 		pRenderer->setRenderColour(0x2f2f2fff);
 		// draw grid lines
 		// horizontal lines

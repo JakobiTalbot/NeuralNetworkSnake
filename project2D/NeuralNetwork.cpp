@@ -2,6 +2,7 @@
 #include "Layer.h"
 #include "Matrix.h"
 #include <math.h>
+#include <algorithm>
 NeuralNetwork::NeuralNetwork(int nInputLayerNeuronCount, int nHiddenLayerCount, int nHiddenLayerNeuronCount, int nOutputLayerNeuronCount)
 {
 	// create input layer
@@ -70,7 +71,7 @@ void NeuralNetwork::Mutate(float fMutationRate)
 	}
 }
 
-int NeuralNetwork::RouletteSelect(int fitnesses[], int nFitnessesCount)
+int NeuralNetwork::RouletteSelect(std::vector<int> fitnesses, int nFitnessesCount)
 {
 	// get total fitness
 	int nTotalFitness = 0;
@@ -86,7 +87,7 @@ int NeuralNetwork::RouletteSelect(int fitnesses[], int nFitnessesCount)
 	for (int i = 0; i < nFitnessesCount; ++i)
 	{
 		lastMaxNum += fitnesses[i];
-		if (lastMaxNum <= selectedNum)
+		if (lastMaxNum >= selectedNum)
 		{
 			return i;
 		}

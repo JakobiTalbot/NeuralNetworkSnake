@@ -5,7 +5,7 @@ class NeuralNetwork;
 class NeuralSnake;
 class Grid;
 
-#define SNAKE_COUNT 10
+#define SNAKE_COUNT 20
 class NeuralSnakeEnvironment
 {
 public:
@@ -16,6 +16,8 @@ public:
 	void Draw(aie::Renderer2D* pRenderer);
 
 	void CreateNewGeneration();
+
+	int CalculateFitness(NeuralSnake* snake);
 
 private:
 	NeuralNetwork* m_pNeuralNetwork;
@@ -28,7 +30,7 @@ private:
 	Grid* m_pGrid;
 
 	int m_iCurrentSnake = 0;
-	int m_nSnakeFitnesses[SNAKE_COUNT];
+	std::vector<int> m_nSnakeFitnesses;
 
 	unsigned int m_seed;
 };

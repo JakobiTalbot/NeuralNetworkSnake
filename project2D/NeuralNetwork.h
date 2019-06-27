@@ -14,7 +14,7 @@ public:
 
 	void Mutate(float fMutationRate);
 
-	int RouletteSelect(int fitnesses[], int nFitnessesCount);
+	int RouletteSelect(std::vector<int> fitnesses, int nFitnessesCount);
 
 private:
 	std::vector<Layer*> m_pLayers;

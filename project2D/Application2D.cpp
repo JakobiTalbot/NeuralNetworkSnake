@@ -37,6 +37,7 @@ bool Application2D::startup()
 	// initialise pickup
 	m_pPickup = new Pickup(m_pGrid);
 	m_pPickup->MovePickup(m_pSnake);
+	setBackgroundColour(0.3f, 0.3f, 0.3f);
 	return true;
 }
 
