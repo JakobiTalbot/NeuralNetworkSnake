@@ -17,11 +17,11 @@ NeuralNetwork::NeuralNetwork(int nInputLayerNeuronCount, int nHiddenLayerCount, 
 	m_pLayers.push_back(new Layer(nOutputLayerNeuronCount, nHiddenLayerNeuronCount));
 
 	// randomly set weight and bias matrices for all layers except input layer
-	//for (int i = 1; i < m_pLayers.size(); ++i)
-	//{		
-	//	m_pLayers[i]->GetWeightMatrix()->randomize();
-	//	m_pLayers[i]->GetBiasMatrix()->randomize();
-	//}
+	for (int i = 1; i < m_pLayers.size(); ++i)
+	{		
+		m_pLayers[i]->GetWeightMatrix()->randomize();
+		m_pLayers[i]->GetBiasMatrix()->randomize();
+	}
 	m_nOutputNeuronCount = nOutputLayerNeuronCount;
 }
 
@@ -71,11 +71,11 @@ void NeuralNetwork::Mutate(float fMutationRate)
 	}
 }
 
-int NeuralNetwork::RouletteSelect(std::vector<int> fitnesses, int nFitnessesCount)
+int NeuralNetwork::RouletteSelect(std::vector<int> fitnesses)
 {
 	// get total fitness
 	int nTotalFitness = 0;
-	for (int i = 0; i < nFitnessesCount; ++i)
+	for (int i = 0; i < fitnesses.size(); ++i)
 	{
 		nTotalFitness += fitnesses[i];
 	}
@@ -84,7 +84,7 @@ int NeuralNetwork::RouletteSelect(std::vector<int> fitnesses, int nFitnessesCoun
 	int selectedNum = rand() % nTotalFitness;
 	int lastMaxNum = 0;
 	// find which fitness was selected
-	for (int i = 0; i < nFitnessesCount; ++i)
+	for (int i = 0; i < fitnesses.size(); ++i)
 	{
 		lastMaxNum += fitnesses[i];
 		if (lastMaxNum >= selectedNum)
@@ -93,7 +93,28 @@ int NeuralNetwork::RouletteSelect(std::vector<int> fitnesses, int nFitnessesCoun
 		}
 	}
 	// return last number
-	return nFitnessesCount - 1;
+	return fitnesses.size() - 1;
+}
+
+NeuralNetwork* NeuralNetwork::SelectThreshold(std::vector<int> fitnesses, std::vector<NeuralNetwork*> networks, int nFitnessThreshold)
+{
+	std::vector<NeuralNetwork*> goodNetworks;
+	// cut out fitnesses under threshold
+	for (int i = 0; i < fitnesses.size(); ++i)
+	{
+		if (fitnesses[i] > nFitnessThreshold)
+		{
+			goodNetworks.push_back(networks[i]);
+		}
+	}
+
+	// if none meet threshold
+	if (goodNetworks.size() == 0)
+		return networks[RouletteSelect(fitnesses)];
+
+	// select network above threshold at random
+	int iRand = rand() % goodNetworks.size();
+	return goodNetworks[iRand];
 }
 
 float Sigmoid(float x)

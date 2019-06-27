@@ -9,6 +9,7 @@
 #include <random>
 #include <time.h>
 
+#define MUTATION_RATE 0.1f
 
 NeuralSnakeEnvironment::NeuralSnakeEnvironment(Grid* pGrid)
 {
@@ -97,16 +98,19 @@ void NeuralSnakeEnvironment::CreateNewGeneration()
 		neuralNetworks.push_back(s->GetNeuralNetwork());
 	}
 	// get new neural network base
-	m_pNeuralNetwork = new NeuralNetwork(*m_pSnakes[m_pNeuralNetwork->RouletteSelect(m_nSnakeFitnesses, SNAKE_COUNT)]->GetNeuralNetwork());
+	int i = m_pNeuralNetwork->RouletteSelect(m_nSnakeFitnesses);
+	m_pNeuralNetwork = new NeuralNetwork(*m_pSnakes[i]->GetNeuralNetwork());
+	//m_pNeuralNetwork = new NeuralNetwork(*m_pNeuralNetwork->SelectThreshold(m_nSnakeFitnesses, neuralNetworks, 101.f));
 	// reset current snake index
 	m_iCurrentSnake = 0;
 	for (auto& snake : m_pSnakes)
 		delete snake;
 	m_pSnakes.clear();
-	m_seed = (unsigned int)time(NULL);
+	//m_seed = (unsigned int)time(NULL);
 	// create snakes
 	for (int i = 0; i < SNAKE_COUNT; ++i)
-		m_pSnakes.push_back(new NeuralSnake(m_pGrid, m_pNeuralNetwork, false, 0.05f, m_fSnakeTimestep));
+		m_pSnakes.push_back(new NeuralSnake(m_pGrid, m_pNeuralNetwork, false, MUTATION_RATE, m_fSnakeTimestep));
+	m_seed = (unsigned int)time(NULL);
 	m_pSnakes[0]->SeedRandom(m_seed);
 	m_nCurrentGeneration++;
 	m_nSnakeFitnesses.clear();
@@ -114,5 +118,5 @@ void NeuralSnakeEnvironment::CreateNewGeneration()
 
 int NeuralSnakeEnvironment::CalculateFitness(NeuralSnake* snake)
 {
-	return ((snake->GetSize() - 1) * 400.f) + snake->GetMoves();
+	return ((snake->GetSize() - 1) * 100.f) + snake->GetMoves();
 }

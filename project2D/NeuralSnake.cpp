@@ -253,7 +253,7 @@ bool NeuralSnake::Update(float fDeltaTime)
 			m_bIncreasingSize = true;
 		}
 
-		if (m_nMovesSinceLastFood >= 40)
+		if (m_nMovesSinceLastFood >= 70)
 			return false;
 
 		// remove last tile if not increasing size

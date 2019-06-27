@@ -14,7 +14,8 @@ public:
 
 	void Mutate(float fMutationRate);
 
-	int RouletteSelect(std::vector<int> fitnesses, int nFitnessesCount);
+	int RouletteSelect(std::vector<int> fitnesses);
+	NeuralNetwork* SelectThreshold(std::vector<int> fitnesses, std::vector<NeuralNetwork*> networks, int nFitnessThreshold);
 
 private:
 	std::vector<Layer*> m_pLayers;
