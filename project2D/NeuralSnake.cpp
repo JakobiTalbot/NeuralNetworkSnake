@@ -4,8 +4,9 @@
 #include "Pickup.h"
 #include "Application2D.h"
 #include "NeuralNetwork.h"
+#include <math.h>
 
-#define INPUT_NEURON_COUNT 6
+#define INPUT_NEURON_COUNT 8
 #define HIDDEN_LAYER_COUNT 2
 #define HIDDEN_NEURON_COUNT 6
 #define OUTPUT_NEURON_COUNT 4
@@ -42,82 +43,65 @@ bool NeuralSnake::Update(float fDeltaTime)
 		Pickup* pPickup = Pickup::GetInstance();
 		// get distance to food in x and y coordinates
 		glm::vec2 v2DistanceToFood = pPickup->GetPickupNode() - m_v2HeadNode;
-		// input 0-1: offset x-y to food
-		// input 2-5: closest obstacle (U-R-D-L)
+		// U-R-D-L (-1/1)
+		// 0-3: is obstacle directly next to us in this direction
+		// 4-7: is food in this direction
 		float fInput[INPUT_NEURON_COUNT];
-		// intialise inputs to defaults
-		fInput[0] = (v2DistanceToFood.x / GRID_WIDTH);
-		fInput[1] = (v2DistanceToFood.y / GRID_HEIGHT);
-		fInput[2] = (((GRID_HEIGHT - m_v2HeadNode.y) / GRID_HEIGHT) - 0.5f) * 2.f;
-		fInput[3] = (((GRID_WIDTH - m_v2HeadNode.x) / GRID_WIDTH) - 0.5f) * 2.f;
-		fInput[4] = ((m_v2HeadNode.y / GRID_HEIGHT) - 0.5f) * 2.f;
-		fInput[5] = ((m_v2HeadNode.x / GRID_WIDTH) - 0.5f) * 2.f;
-		//fInput[0] = (v2DistanceToFood.x / GRID_WIDTH) / 2.f + 0.5f;
-		//fInput[1] = (v2DistanceToFood.y / GRID_HEIGHT) / 2.f + 0.5f;
-		//fInput[2] = ((GRID_HEIGHT - m_v2HeadNode.y) / GRID_HEIGHT);
-		//fInput[3] = ((GRID_WIDTH - m_v2HeadNode.x) / GRID_WIDTH);
-		//fInput[4] = (m_v2HeadNode.y / GRID_HEIGHT);
-		//fInput[5] = (m_v2HeadNode.x / GRID_WIDTH);
+		for (auto& f : fInput)
+			f = 1;
 
-		// find obstacles up
-		for (int y = m_v2HeadNode.y + 1; y < GRID_HEIGHT; ++y)
+		if (m_v2HeadNode.y >= GRID_HEIGHT - 1.5f) // if at top of grid
+			fInput[0] = -1;
+		else if (m_v2HeadNode.y < 0.5f) // if at bottom of grid
+			fInput[2] = -1;
+		if (m_v2HeadNode.x >= GRID_WIDTH - 1.5f) // if at right of grid
+			fInput[1] = -1;
+		else if (m_v2HeadNode.x < 0.5f) // if at left of grid
+			fInput[3] = -1;
+
+		if (fInput[0] < 0.5f)
 		{
-			std::vector<Node*>::iterator nodeIterator = std::find(m_pSnakeNodes.begin() + 1, m_pSnakeNodes.end(), &m_pGrid->GetNodes()[(int)m_v2HeadNode.x][y]);
+			// if node above contains snake
+			std::vector<Node*>::iterator nodeIterator = std::find(m_pSnakeNodes.begin() + 1, m_pSnakeNodes.end(), &m_pGrid->GetNodes()[(int)m_v2HeadNode.x][(int)m_v2HeadNode.y + 1]);
 			if (nodeIterator != m_pSnakeNodes.end()
 				&& nodeIterator != m_pSnakeNodes.end() - 1)
-			{
-				fInput[2] = (y - (int)m_v2HeadNode.y) / GRID_HEIGHT;
-				break;
-			}
+				fInput[0] = -1;
 		}
-		// find obstacles to the right
-		for (int x = m_v2HeadNode.x + 1; x < GRID_WIDTH; ++x)
+		if (fInput[1] < 0.5f)
 		{
-			std::vector<Node*>::iterator nodeIterator = std::find(m_pSnakeNodes.begin() + 1, m_pSnakeNodes.end(), &m_pGrid->GetNodes()[x][(int)m_v2HeadNode.y]);
+			// if node to right contains snake
+			std::vector<Node*>::iterator nodeIterator = std::find(m_pSnakeNodes.begin() + 1, m_pSnakeNodes.end(), &m_pGrid->GetNodes()[(int)m_v2HeadNode.x + 1][(int)m_v2HeadNode.y]);
 			if (nodeIterator != m_pSnakeNodes.end()
 				&& nodeIterator != m_pSnakeNodes.end() - 1)
-			{
-				fInput[3] = (x - (int)m_v2HeadNode.x) / GRID_WIDTH;
-				break;
-			}
+				fInput[0] = -1;
 		}
-		// find obstacles down
-		for (int y = m_v2HeadNode.y; y >= 0; --y)
+		if (fInput[2] < 0.5f)
 		{
-			std::vector<Node*>::iterator nodeIterator = std::find(m_pSnakeNodes.begin() + 1, m_pSnakeNodes.end(), &m_pGrid->GetNodes()[(int)m_v2HeadNode.x][y]);
+			// if node down contains snake
+			std::vector<Node*>::iterator nodeIterator = std::find(m_pSnakeNodes.begin() + 1, m_pSnakeNodes.end(), &m_pGrid->GetNodes()[(int)m_v2HeadNode.x][(int)m_v2HeadNode.y - 1]);
 			if (nodeIterator != m_pSnakeNodes.end()
 				&& nodeIterator != m_pSnakeNodes.end() - 1)
-			{
-				fInput[4] = y / GRID_HEIGHT;
-				break;
-			}
+				fInput[0] = -1;
 		}
-		// find obstacles to the left
-		for (int x = m_v2HeadNode.x; x >= 0; --x)
+		if (fInput[3] < 0.5f)
 		{
-			std::vector<Node*>::iterator nodeIterator = std::find(m_pSnakeNodes.begin() + 1, m_pSnakeNodes.end(), &m_pGrid->GetNodes()[x][(int)m_v2HeadNode.y]);
+			// if node to left contains snake
+			std::vector<Node*>::iterator nodeIterator = std::find(m_pSnakeNodes.begin() + 1, m_pSnakeNodes.end(), &m_pGrid->GetNodes()[(int)m_v2HeadNode.x - 1][(int)m_v2HeadNode.y]);
 			if (nodeIterator != m_pSnakeNodes.end()
 				&& nodeIterator != m_pSnakeNodes.end() - 1)
-			{
-				fInput[5] = x / GRID_WIDTH;
-				break;
-			}
+				fInput[0] = -1;
 		}
+
+		// if on same x
+		if (v2DistanceToFood.x < 0.5f && v2DistanceToFood.x > -0.5f)
+			v2DistanceToFood.y > 0.f ? fInput[4] = -1 : fInput[6] = -1;
+		if (v2DistanceToFood.y < 0.5f && v2DistanceToFood.y > -0.5f)
+			v2DistanceToFood.x > 0.f ? fInput[5] = -1 : fInput[7] = -1;
 
 		// create array to store output
 		float fOutput[OUTPUT_NEURON_COUNT];
 		// get output
 		m_pNeuralNetwork->GetOutput(fInput, fOutput);
-
-		system("cls");
-		// debug print
-		for (int i = 0; i < INPUT_NEURON_COUNT; ++i)
-		{
-			if (i < OUTPUT_NEURON_COUNT)
-				printf("INPUT %i: %.3f\tOUTPUT %i: %.3f\n", i, fInput[i], i, fOutput[i]);
-			else
-				printf("INPUT %i: %.3f\n", i, fInput[i]);
-		}
 
 		float fBestOutput = 0.f;
 		for (int i = 0; i < OUTPUT_NEURON_COUNT; ++i)
@@ -263,6 +247,16 @@ bool NeuralSnake::Update(float fDeltaTime)
 			m_bIncreasingSize = false;
 
 		m_nMoves++;
+
+		system("cls");
+		// debug print
+		for (int i = 0; i < INPUT_NEURON_COUNT; ++i)
+		{
+			if (i < OUTPUT_NEURON_COUNT)
+				printf("INPUT %i: %.3f\tOUTPUT %i: %.3f\n", i, fInput[i], i, fOutput[i]);
+			else
+				printf("INPUT %i: %.3f\n", i, fInput[i]);
+		}
 	}
 
 	// return true if still alive

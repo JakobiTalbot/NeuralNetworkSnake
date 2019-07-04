@@ -92,15 +92,27 @@ void NeuralSnakeEnvironment::CreateNewGeneration()
 {
 	delete m_pNeuralNetwork;
 	// get neural networks
-	std::vector<NeuralNetwork*> neuralNetworks;
-	for (auto& s : m_pSnakes)
-	{
-		neuralNetworks.push_back(s->GetNeuralNetwork());
-	}
+	//std::vector<NeuralNetwork*> neuralNetworks;
+	//for (auto& s : m_pSnakes)
+	//{
+	//	neuralNetworks.push_back(s->GetNeuralNetwork());
+	//}
 	// get new neural network base
-	int i = m_pNeuralNetwork->RouletteSelect(m_nSnakeFitnesses);
-	m_pNeuralNetwork = new NeuralNetwork(*m_pSnakes[i]->GetNeuralNetwork());
+	//int i = m_pNeuralNetwork->RouletteSelect(m_nSnakeFitnesses);
+	//m_pNeuralNetwork = new NeuralNetwork(*m_pSnakes[i]->GetNeuralNetwork());
 	//m_pNeuralNetwork = new NeuralNetwork(*m_pNeuralNetwork->SelectThreshold(m_nSnakeFitnesses, neuralNetworks, 101.f));
+	// select best
+	int iBest = 0;
+	int nHighestScore = m_nSnakeFitnesses[0];
+	for (int i = 1; i < SNAKE_COUNT; ++i)
+	{
+		if (m_nSnakeFitnesses[i] > m_nSnakeFitnesses[iBest])
+		{
+			iBest = i;
+			nHighestScore = m_nSnakeFitnesses[i];
+		}
+	}
+	m_pNeuralNetwork = new NeuralNetwork(*m_pSnakes[iBest]->GetNeuralNetwork());
 	// reset current snake index
 	m_iCurrentSnake = 0;
 	for (auto& snake : m_pSnakes)
