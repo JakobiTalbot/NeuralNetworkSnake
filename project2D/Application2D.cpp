@@ -60,6 +60,10 @@ void Application2D::update(float deltaTime)
 	//m_pSnake->Update(deltaTime, m_pPickup);
 	m_pSnakeEnvironment->Update(deltaTime);
 
+	// toggle drawing
+	if (input->wasKeyReleased(aie::INPUT_KEY_SPACE))
+		m_bDraw = !m_bDraw;
+
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
@@ -67,6 +71,8 @@ void Application2D::update(float deltaTime)
 
 void Application2D::draw()
 {
+	if (!m_bDraw)
+		return;
 
 	// wipe the screen to the background colour
 	clearScreen();

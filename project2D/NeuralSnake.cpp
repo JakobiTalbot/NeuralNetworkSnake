@@ -3,13 +3,12 @@
 #include "Input.h"
 #include "Pickup.h"
 #include "Application2D.h"
+#include "NeuralSnakeEnvironment.h"
 #include "NeuralNetwork.h"
 #include <math.h>
 
-#define INPUT_NEURON_COUNT 8
-#define HIDDEN_LAYER_COUNT 2
-#define HIDDEN_NEURON_COUNT 6
-#define OUTPUT_NEURON_COUNT 4
+#define EXPIRE_MOVES_COUNT 50
+
 NeuralSnake::NeuralSnake(Grid* pGrid, NeuralNetwork* pNeuralNetwork, bool bWrapAround, float fMutationRate, float fTimestep)
 {
 	m_pGrid = pGrid;
@@ -47,8 +46,10 @@ bool NeuralSnake::Update(float fDeltaTime)
 		// 0-3: is obstacle directly next to us in this direction
 		// 4-7: is food in this direction
 		float fInput[INPUT_NEURON_COUNT];
-		for (auto& f : fInput)
-			f = 1;
+		for (int i = 0; i < INPUT_NEURON_COUNT; ++i)
+		{
+			i < 4 ? fInput[i] = 1 : fInput[i] = -1;
+		}
 
 		if (m_v2HeadNode.y >= GRID_HEIGHT - 1.5f) // if at top of grid
 			fInput[0] = -1;
@@ -94,9 +95,12 @@ bool NeuralSnake::Update(float fDeltaTime)
 
 		// if on same x
 		if (v2DistanceToFood.x < 0.5f && v2DistanceToFood.x > -0.5f)
-			v2DistanceToFood.y > 0.f ? fInput[4] = -1 : fInput[6] = -1;
+			v2DistanceToFood.y > 0.f ? fInput[4] = 1 : fInput[6] = 1;
+		// if on same y
 		if (v2DistanceToFood.y < 0.5f && v2DistanceToFood.y > -0.5f)
-			v2DistanceToFood.x > 0.f ? fInput[5] = -1 : fInput[7] = -1;
+			v2DistanceToFood.x > 0.f ? fInput[5] = 1 : fInput[7] = 1;
+
+		//v2DistanceToFood.x > v2DistanceToFood.y ? v2DistanceToFood.x > 0.f ? fInput[5] = 1 : fInput[7] = 1 : v2DistanceToFood.y > 0.f ? fInput[4] = 1 : fInput[6] = 1;
 
 		// create array to store output
 		float fOutput[OUTPUT_NEURON_COUNT];
@@ -237,7 +241,7 @@ bool NeuralSnake::Update(float fDeltaTime)
 			m_bIncreasingSize = true;
 		}
 
-		if (m_nMovesSinceLastFood >= 70)
+		if (m_nMovesSinceLastFood >= EXPIRE_MOVES_COUNT)
 			return false;
 
 		// remove last tile if not increasing size

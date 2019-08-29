@@ -6,6 +6,12 @@ class NeuralSnake;
 class Grid;
 
 #define SNAKE_COUNT 20
+
+#define INPUT_NEURON_COUNT 8
+#define HIDDEN_LAYER_COUNT 3
+#define HIDDEN_NEURON_COUNT 12
+#define OUTPUT_NEURON_COUNT 4
+
 class NeuralSnakeEnvironment
 {
 public:
@@ -24,7 +30,9 @@ private:
 	std::vector<NeuralSnake*> m_pSnakes;
 	aie::Font* m_pFont;
 
-	float m_fSnakeTimestep = 0.2f;
+	float m_fSnakeTimestep = 0.1f;
+	float m_fMutationRate = 0.05f;
+	bool m_bDrawStats = true;
 
 	int m_nCurrentGeneration = 0;
 	Grid* m_pGrid;

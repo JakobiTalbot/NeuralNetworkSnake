@@ -10,10 +10,6 @@ class Application2D;
 //class NeuralNetwork;
 struct Node;
 
-#define INPUT_NEURON_COUNT 6
-#define HIDDEN_LAYER_COUNT 2
-#define HIDDEN_NEURON_COUNT 8
-#define OUTPUT_NEURON_COUNT 4
 // the directions in which the snake can move in
 enum class eNeuralDirection
 {

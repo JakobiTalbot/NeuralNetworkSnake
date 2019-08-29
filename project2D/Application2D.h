@@ -28,5 +28,7 @@ protected:
 	NeuralSnakeEnvironment*		m_pSnakeEnvironment;
 	Pickup*						m_pPickup;
 
+	bool						m_bDraw = true;
+
 	static Application2D* m_pInstance;
 };
