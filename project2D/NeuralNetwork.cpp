@@ -6,7 +6,7 @@
 NeuralNetwork::NeuralNetwork(int nInputLayerNeuronCount, int nHiddenLayerCount, int nHiddenLayerNeuronCount, int nOutputLayerNeuronCount)
 {
 	// create input layer
-	m_pLayers.push_back(new Layer(nInputLayerNeuronCount));
+	m_pLayers.push_back(new Layer(nInputLayerNeuronCount, nInputLayerNeuronCount));
 
 	// create hidden layers
 	m_pLayers.push_back(new Layer(nHiddenLayerNeuronCount, nInputLayerNeuronCount));
@@ -17,7 +17,7 @@ NeuralNetwork::NeuralNetwork(int nInputLayerNeuronCount, int nHiddenLayerCount, 
 	m_pLayers.push_back(new Layer(nOutputLayerNeuronCount, nHiddenLayerNeuronCount));
 
 	// randomly set weight and bias matrices for all layers except input layer
-	for (int i = 1; i < m_pLayers.size(); ++i)
+	for (int i = 0; i < m_pLayers.size(); ++i)
 	{		
 		m_pLayers[i]->GetWeightMatrix()->randomize();
 		m_pLayers[i]->GetBiasMatrix()->randomize();
@@ -42,29 +42,28 @@ NeuralNetwork::~NeuralNetwork()
 
 void NeuralNetwork::GetOutput(const float* pInput, float* pOutput)
 {
+	static const int count = 8;
+	Matrix m = Matrix(count, 1);
 	// set input layer
-	for (int i = 0; i < m_pLayers[0]->GetWeightMatrix()->getRows(); ++i)
-		*m_pLayers[0]->GetWeightMatrix()[0][i] = pInput[i];
-
-	// get copy of input layer
-	Matrix mOutput = Matrix(*m_pLayers[0]->GetWeightMatrix());
+	for (int i = 0; i < count; ++i)
+		m[i][0] = pInput[i];
 
 	// iterate through layers
-	for (int i = 1; i < m_pLayers.size(); ++i)
+	for (int i = 0; i < m_pLayers.size(); ++i)
 	{
-		mOutput = m_pLayers[i]->GetWeightMatrix()->product(mOutput); 
-		mOutput = mOutput + *m_pLayers[i]->GetBiasMatrix();
-		mOutput.map(Tanh);
+		m = m_pLayers[i]->GetWeightMatrix()->product(m);
+		m = m + *m_pLayers[i]->GetBiasMatrix();
+		m.map(Tanh);
 	}
 
 	// set outputs
 	for (int i = 0; i < m_nOutputNeuronCount; ++i)
-		pOutput[i] = mOutput[i][0];
+		pOutput[i] = m[i][0];
 }
 
 void NeuralNetwork::Mutate(float fMutationRate)
 {
-	for (int i = 1; i < m_pLayers.size(); ++i)
+	for (int i = 0; i < m_pLayers.size(); ++i)
 	{
 		m_pLayers[i]->GetBiasMatrix()->mutate(fMutationRate);
 		m_pLayers[i]->GetWeightMatrix()->mutate(fMutationRate);
