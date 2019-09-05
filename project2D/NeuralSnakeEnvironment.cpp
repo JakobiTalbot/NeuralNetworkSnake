@@ -106,25 +106,17 @@ void NeuralSnakeEnvironment::Draw(aie::Renderer2D* pRenderer)
 
 void NeuralSnakeEnvironment::CreateNewGeneration()
 {
-	delete m_pNeuralNetwork;
-	// get neural networks
-	std::vector<NeuralNetwork*> neuralNetworks;
-	for (auto& s : m_pSnakes)
-	{
-		neuralNetworks.push_back(s->GetNeuralNetwork());
-	}
 	// get new neural network base
 	int i = m_pNeuralNetwork->RouletteSelect(m_nSnakeFitnesses);
+	delete m_pNeuralNetwork;
 	m_pNeuralNetwork = new NeuralNetwork(*m_pSnakes[i]->GetNeuralNetwork());
-
-
 
 	// reset current snake index
 	m_iCurrentSnake = 0;
 	for (auto& snake : m_pSnakes)
 		delete snake;
 	m_pSnakes.clear();
-	//m_seed = (unsigned int)time(NULL);
+
 	// create snakes
 	for (int i = 0; i < SNAKE_COUNT; ++i)
 		m_pSnakes.push_back(new NeuralSnake(m_pGrid, m_pNeuralNetwork, false, m_fMutationRate, m_fSnakeTimestep));

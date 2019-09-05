@@ -93,12 +93,29 @@ bool NeuralSnake::Update(float fDeltaTime)
 				fInput[0] = -1;
 		}
 
-		// if on same x
-		if (v2DistanceToFood.x < 0.5f && v2DistanceToFood.x > -0.5f)
-			v2DistanceToFood.y > 0.f ? fInput[4] = 1 : fInput[6] = 1;
-		// if on same y
-		if (v2DistanceToFood.y < 0.5f && v2DistanceToFood.y > -0.5f)
-			v2DistanceToFood.x > 0.f ? fInput[5] = 1 : fInput[7] = 1;
+		if (v2DistanceToFood.x < v2DistanceToFood.y)
+		{
+			// if food to left
+			if (v2DistanceToFood.x < 0.f)
+				fInput[7] = 1;
+			else
+				fInput[5] = 1;
+		}
+		else
+		{
+			// if food down
+			if (v2DistanceToFood.y < 0.f)
+				fInput[6] = 1;
+			else
+				fInput[4] = 1;
+		}
+
+		//// if on same x
+		//if (v2DistanceToFood.x < 0.5f && v2DistanceToFood.x > -0.5f)
+		//	v2DistanceToFood.y > 0.f ? fInput[4] = 1 : fInput[6] = 1;
+		//// if on same y
+		//if (v2DistanceToFood.y < 0.5f && v2DistanceToFood.y > -0.5f)
+		//	v2DistanceToFood.x > 0.f ? fInput[5] = 1 : fInput[7] = 1;
 
 		//v2DistanceToFood.x > v2DistanceToFood.y ? v2DistanceToFood.x > 0.f ? fInput[5] = 1 : fInput[7] = 1 : v2DistanceToFood.y > 0.f ? fInput[4] = 1 : fInput[6] = 1;
 

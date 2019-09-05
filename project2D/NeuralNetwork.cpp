@@ -42,7 +42,8 @@ NeuralNetwork::~NeuralNetwork()
 
 void NeuralNetwork::GetOutput(const float* pInput, float* pOutput)
 {
-	static const int count = 8;
+	// get size for matrix
+	static const int count = m_pLayers[0]->GetNeuronCount();
 	Matrix m = Matrix(count, 1);
 	// set input layer
 	for (int i = 0; i < count; ++i)

@@ -8,8 +8,8 @@ class Grid;
 #define SNAKE_COUNT 20
 
 #define INPUT_NEURON_COUNT 8
-#define HIDDEN_LAYER_COUNT 3
-#define HIDDEN_NEURON_COUNT 12
+#define HIDDEN_LAYER_COUNT 1
+#define HIDDEN_NEURON_COUNT 64
 #define OUTPUT_NEURON_COUNT 4
 
 class NeuralSnakeEnvironment
@@ -40,5 +40,6 @@ private:
 	int m_iCurrentSnake = 0;
 	std::vector<int> m_nSnakeFitnesses;
 
+	int m_fittestSnake = 0;
 	unsigned int m_seed;
 };
