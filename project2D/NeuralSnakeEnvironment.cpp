@@ -106,10 +106,22 @@ void NeuralSnakeEnvironment::Draw(aie::Renderer2D* pRenderer)
 
 void NeuralSnakeEnvironment::CreateNewGeneration()
 {
-	// get new neural network base
-	int i = m_pNeuralNetwork->RouletteSelect(m_nSnakeFitnesses);
+	int j = 0;
+	int bestFitness = CalculateFitness(m_pSnakes[0]);
+	// find index of best snake from last generation
+	for (int i = 1; i < SNAKE_COUNT; ++i)
+	{
+		int fitnessCheck = CalculateFitness(m_pSnakes[i]);
+		if (fitnessCheck > bestFitness)
+		{
+			bestFitness = fitnessCheck;
+			j = i;
+		}
+	}
+
 	delete m_pNeuralNetwork;
-	m_pNeuralNetwork = new NeuralNetwork(*m_pSnakes[i]->GetNeuralNetwork());
+	// create copy of best neural network
+	m_pNeuralNetwork = new NeuralNetwork(*m_pSnakes[j]->GetNeuralNetwork());
 
 	// reset current snake index
 	m_iCurrentSnake = 0;
@@ -117,9 +129,19 @@ void NeuralSnakeEnvironment::CreateNewGeneration()
 		delete snake;
 	m_pSnakes.clear();
 
-	// create snakes
-	for (int i = 0; i < SNAKE_COUNT; ++i)
+	// create best snake from last generation
+	m_pSnakes.push_back(new NeuralSnake(m_pGrid, m_pNeuralNetwork, false, 0.f, m_fSnakeTimestep));
+
+	// create slightly mutated snakes
+	for (int i = 0; i < SNAKE_COUNT - 3; ++i)
 		m_pSnakes.push_back(new NeuralSnake(m_pGrid, m_pNeuralNetwork, false, m_fMutationRate, m_fSnakeTimestep));
+
+	// create 2 random snakes
+	for (int i = 0; i < 2; ++i)
+	{
+		m_pSnakes.push_back(new NeuralSnake(m_pGrid, m_pNeuralNetwork, false, 1.f, m_fSnakeTimestep));
+	}
+
 	m_seed = (unsigned int)time(NULL);
 	m_pSnakes[0]->SeedRandom(m_seed);
 	m_nCurrentGeneration++;

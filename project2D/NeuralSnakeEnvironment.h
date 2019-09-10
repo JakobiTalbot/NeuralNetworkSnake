@@ -9,8 +9,10 @@ class Grid;
 
 #define INPUT_NEURON_COUNT 8
 #define HIDDEN_LAYER_COUNT 1
-#define HIDDEN_NEURON_COUNT 64
+#define HIDDEN_NEURON_COUNT 32
 #define OUTPUT_NEURON_COUNT 4
+
+#define EXPIRE_MOVES_COUNT 50
 
 class NeuralSnakeEnvironment
 {

@@ -7,8 +7,6 @@
 #include "NeuralNetwork.h"
 #include <math.h>
 
-#define EXPIRE_MOVES_COUNT 50
-
 NeuralSnake::NeuralSnake(Grid* pGrid, NeuralNetwork* pNeuralNetwork, bool bWrapAround, float fMutationRate, float fTimestep)
 {
 	m_pGrid = pGrid;
@@ -22,7 +20,8 @@ NeuralSnake::NeuralSnake(Grid* pGrid, NeuralNetwork* pNeuralNetwork, bool bWrapA
 	m_pSnakeNodes.insert(m_pSnakeNodes.begin(), &m_pGrid->GetNodes()[(int)m_v2HeadNode.x][(int)m_v2HeadNode.y]);
 	// copy master neural network
 	m_pNeuralNetwork = new NeuralNetwork(*pNeuralNetwork);
-	m_pNeuralNetwork->Mutate(fMutationRate);
+	if (fMutationRate > 0.005f)
+		m_pNeuralNetwork->Mutate(fMutationRate);
 }
 
 NeuralSnake::~NeuralSnake()
